@@ -52,7 +52,9 @@ jobs:
       - name: Clone BioPro Core (for SDK access)
         run: |
           git clone --depth=1 https://github.com/KalaimaranB/BioPro.git /tmp/biopro-core
-          pip install -r /tmp/biopro-core/requirements.txt
+          # Strip heavy ML/CUDA libraries from requirements.txt to dramatically speed up CI
+          grep -v -E "torch|cellpose|llama-cpp|nvidia" /tmp/biopro-core/requirements.txt > /tmp/biopro-core/ci-requirements.txt
+          pip install -r /tmp/biopro-core/ci-requirements.txt
 
       # ── 3. Auto-Versioning ───────────────────────────────────────────────
       - name: Bump Version
